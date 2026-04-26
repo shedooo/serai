@@ -30,6 +30,7 @@ ciphersuite = { path = "../../ciphersuite", version = "^0.4.1", default-features
 dkg = { path = "../", version = "0.6", default-features = false }
 
 [dev-dependencies]
+proptest = "1.4.0"
 rand_core = { version = "0.6", default-features = false, features = ["getrandom"] }
 dalek-ff-group = { path = "../../dalek-ff-group" }
 dkg-recovery = { path = "../recovery", default-features = false, features = ["std"] }
