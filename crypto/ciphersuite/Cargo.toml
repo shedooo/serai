@@ -37,6 +37,8 @@ rand_core = { version = "0.6", default-features = false, features = ["std"] }
 
 ff-group-tests = { version = "0.13", path = "../ff-group-tests" }
 
+proptest = "1.0"
+dalek-ff-group = { path = "../dalek-ff-group", features = ["std"] }
 [features]
 alloc = ["std-shims", "ff/alloc"]
 std = [

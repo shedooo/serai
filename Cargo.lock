@@ -1574,12 +1574,14 @@ dependencies = [
 name = "ciphersuite"
 version = "0.4.2"
 dependencies = [
+ "dalek-ff-group",
  "digest 0.10.7",
  "ff",
  "ff-group-tests",
  "flexible-transcript",
  "group",
  "hex",
+ "proptest",
  "rand_core 0.6.4",
  "std-shims",
  "subtle",
@@ -2377,8 +2379,11 @@ name = "dkg-dealer"
 version = "0.6.0"
 dependencies = [
  "ciphersuite",
+ "dalek-ff-group",
  "dkg",
+ "modular-frost",
  "rand_core 0.6.4",
+ "schnorrkel",
  "std-shims",
  "zeroize",
 ]
@@ -5747,6 +5752,7 @@ dependencies = [
 name = "multiexp"
 version = "0.4.2"
 dependencies = [
+ "ciphersuite",
  "dalek-ff-group",
  "ff",
  "group",
