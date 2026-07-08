@@ -1,0 +1,92 @@
+TASK 2 RESULTS — dkg-musig & modular-frost
+
+SECTION A — dkg-musig
+Tests written: 10
+Tests passed: 10
+Tests failed: 0
+Panics found: 0
+
+TEST A.2 — KEY ORDERING SENSITIVITY (CRITICAL CHECK):
+Result: All permutations produced different keys
+
+TEST A.8 — IDENTITY POINT BEHAVIOR:
+identity as one key: Ok(group_key)
+identity as only key: Ok(group_key)
+Security assessment: The identity point is accepted by `musig_key`, which may allow a malicious participant to submit an identity point instead of a valid public key. Depending on the broader protocol, this might have security implications (e.g. contributing a zero key share), but `musig_key` itself does not reject it.
+
+TEST B.12 — NONCE REUSE:
+Protocol prevents reuse: YES (At the type level, `SignMachine::from_cache` consumes `CachedPreprocess`, enforcing one-time use)
+Second signature produced: NO
+Risk assessment: Since reuse is prevented by the Rust type system (by taking `self` / consuming the cached value), it is impossible for a user to accidentally reuse a nonce when compiling with valid Rust code.
+
+SUMMARY
+Total: 23 | Passed: 23 | Failed: 0 | Panics: 0
+
+SECURITY-RELEVANT FINDINGS:
+1. `musig_key` allows identity point as a participant key. While this is mathematically handled, it could be a vector if an application assumes all participant keys have a discrete logarithm known to someone (the identity point logarithm is known to be 0). If the caller doesn't prevent this, someone could trivially claim the identity point as their key. However, this is largely mitigated if PoP (Proof of Possession) is required or if it doesn't affect MuSig security. Still, this edge case was found.
+
+RAW CARGO OUTPUT:
+   Compiling dalek-ff-group v0.4.4 (/app/crypto/dalek-ff-group)
+   Compiling dkg-musig v0.6.0 (/app/crypto/dkg/musig)
+   Compiling modular-frost v0.10.1 (/app/crypto/frost)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.64s
+     Running unittests src/lib.rs (target/debug/deps/dkg_musig-087fea6a00da7e1a)
+
+running 1 test
+test tests::test_musig ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/property_tests.rs (target/debug/deps/property_tests-c8ffba70f7074ac7)
+
+running 10 tests
+test test_a10_binding_factor_uniqueness ... ok
+test test_a4_single_key_aggregation ... ok
+test test_a5_two_key_symmetry_check ... ok
+test test_a6_duplicate_key_rejection ... ok
+test test_a7_empty_key_rejection ... ok
+test test_a8_identity_point_behavior ... ok
+test test_a3_context_sensitivity ... ok
+test test_a1_binding_factor_determinism ... ok
+test test_a2_key_ordering_sensitivity ... ok
+test test_a9_musig_full_roundtrip ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.96s
+
+     Running unittests src/lib.rs (target/debug/deps/modular_frost-38f349dd63763687)
+
+running 1 test
+test tests::literal::dalek::ristretto_vectors ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/property_tests.rs (target/debug/deps/property_tests-16a02a0e9bb0cd1e)
+
+running 13 tests
+test test_b12_resign_with_same_preprocess ... ok
+test test_b13_wrong_message_in_second_round ... ok
+test test_b11_signing_above_threshold ... ok
+test test_b2_empty_message_signing ... ok
+test test_b4_all_zero_message ... ok
+test test_b5_threshold_boundary_exactly_t_signers ... ok
+test test_b6_below_threshold_rejection ... ok
+test test_b7_duplicate_participant_rejection ... ok
+test test_b8_out_of_bounds_participant_index ... ok
+test test_b9_invalid_share_blame ... ok
+test test_b10_nonce_never_zero ... ok
+test test_b1_sign_verify_roundtrip ... ok
+test test_b3_large_message_signing ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.62s
+
+   Doc-tests dkg_musig
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests modular_frost
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

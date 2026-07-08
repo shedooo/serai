@@ -45,6 +45,7 @@ dkg-recovery = { path = "../dkg/recovery", version = "0.6", default-features = f
 dkg-dealer = { path = "../dkg/dealer", version = "0.6", default-features = false, features = ["std"], optional = true }
 
 [dev-dependencies]
+proptest = "1.4.0"
 hex = "0.4"
 serde_json = { version = "1", default-features = false, features = ["std"] }
 
