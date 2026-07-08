@@ -34,3 +34,7 @@ std = [
   "dkg/std",
 ]
 default = ["std"]
+[dev-dependencies]
+dalek-ff-group = { path = "../../dalek-ff-group", features = ["std"] }
+schnorrkel = "0.11"
+modular-frost = { path = "../../frost" }

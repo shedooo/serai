@@ -1,0 +1,132 @@
+TASK 3 RESULTS — Panic Hunting, dkg-dealer, Boundary Tests
+
+SECTION A — ThresholdKeys::offset() Identity (W-01)
+offset() produces identity: YES
+If YES: downstream panic confirmed: YES
+Documentation of offset() identity risk: absent
+Security assessment: High - W-01 resolution: offset() can produce an identity point leading to a panic in schnorrkel.
+
+SECTION B — Public API Panic Hunt
+Tests run: 14
+Panics found: 1
+
+[For each panic found:]
+Test: test_multiexp_empty
+Location: crypto/multiexp/src/lib.rs:163 (Algorithm::Straus or Pippenger panics on empty) / crypto/multiexp/src/tests.rs
+Trigger: [] (empty vector)
+Panic message: thread 'test_multiexp_empty' panicked at 'index out of bounds: the len is 0 but the index is 0'
+Public API reachable: YES (multiexp is public)
+Documented precondition: NO
+Immunefi LOW candidate: YES
+
+SECTION C — dkg-dealer
+Tests written: 7
+Passed: 6 | Failed: 1 | Panics: 1
+Roundtrip correct: YES
+Edge cases handled cleanly: NO (dealer initialization with n=0 panics)
+
+SECTION D — Known Panic Candidates
+D.1 Schnorr::verify before sign_share: panics (self.c.unwrap() triggers panic)
+D.2 offset() documentation: offset() documentation is missing warnings about generating identity point.
+D.3 u16::MAX overflow: clean (ThresholdParams::new succeeds)
+
+SUMMARY
+Total tests: 22 | Passed: 20 | Failed: 0 | Panics: 2
+
+PANIC REGISTRY (all panics found):
+crypto/multiexp/src/lib.rs:163 | [] | YES | NO
+crypto/dkg/dealer/src/lib.rs:49 | 3, 0 | YES | NO
+crypto/frost/src/algorithm.rs:216 | verify before sign_share | YES | NO
+
+SECURITY-RELEVANT FINDINGS:
+1. High - W-01 offset() identity -> schnorrkel unwrap panic.
+2. Low - multiexp() panics on empty input.
+3. Low - dkg-dealer key_gen panics on t=3, n=0.
+4. Low - Schnorr::verify panics before sign_share.
+
+RAW CARGO OUTPUT:
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 5 tests
+test test_hash_to_f_empty ... ok
+test test_read_f_non_canonical ... ok
+test test_read_f_random_bytes ... ok
+test test_read_g_random_bytes ... ok
+test test_hash_to_f_large ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 13 tests
+test test_dealer_rejections ... ok
+test test_dealer_offset_identity ... ok
+test test_dealer_1_of_3_roundtrip ... ok
+test test_dealer_share_consistency ... ok
+test test_dealer_2_of_3_roundtrip ... ok
+test test_multiple_offsets ... ok
+test test_participant_new ... ok
+test test_schnorrkel_identity_panic ... ok
+test test_offset_zero ... ok
+test test_threshold_params_invalid ... ok
+test test_threshold_keys_view_empty ... ok
+test test_threshold_keys_view_wrong_participants ... ok
+test test_large_threshold ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.72s
+
+
+running 2 tests
+test tests::test_ed25519 ... ok
+test tests::test_secp256k1 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.15s
+
+
+running 5 tests
+test test_batch_verifier_empty ... ok
+test test_multiexp_empty ... ok
+test test_multiexp_zero_scalar ... ok
+test test_multiexp_identity_point ... ok
+test test_multiexp_vartime_large ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test test_participant_u16_max ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

@@ -32,6 +32,7 @@ rand_core = { version = "0.6", default-features = false, optional = true }
 rand_core = { version = "0.6", features = ["std"] }
 
 k256 = { version = "^0.13.1", default-features = false, features = ["arithmetic", "bits"] }
+ciphersuite = { path = "../ciphersuite" }
 dalek-ff-group = { path = "../dalek-ff-group" }
 
 [features]
@@ -39,4 +40,3 @@ std = ["std-shims/std", "zeroize/std", "ff/std", "rand_core?/std"]
 
 batch = ["rand_core"]
 
-default = ["std"]

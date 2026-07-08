@@ -62,3 +62,7 @@ p256 = ["ciphersuite-kp256"]
 ed448 = ["minimal-ed448"]
 
 tests = ["hex", "rand_core/getrandom", "dkg-dealer", "dkg-recovery"]
+
+[[test]]
+name = "task3_frost"
+path = "tests/task3_frost.rs"
